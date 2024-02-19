@@ -31,3 +31,4 @@ def select_mb(mb_selection):  # Выбор CPU по параметрам из у
 
     return mb_selection[mb_list.index(max(mb_list))]
 
+test_commit = "test ok"
