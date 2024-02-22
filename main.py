@@ -1,5 +1,5 @@
 import sys
-from selector.select_alg import pc_selection, db_pc_list
+from selector.sel_alg import pc_selection, db_pc_list
 from interface import *
 
 

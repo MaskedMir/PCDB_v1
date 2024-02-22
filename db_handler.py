@@ -2,13 +2,13 @@ import sqlite3
 
 
 def mb_db(cpu, price_max, price_min):
+
+    naming = cpu[0]
+
     con = sqlite3.connect('pcdb.db')
     cur = con.cursor()
 
-    cur.execute(f'SELECT * FROM motherboard_parameters '
-                f'WHERE (price <= {price_max})'
-                f'AND (price >=  {price_min})'
-                f'AND ((SELECT cpu_parameters.socket FROM cpu_parameters WHERE cpu_parameters.name = {cpu[0]}) = motherboard_parameters.socket)')
+    cur.execute(f'SELECT * FROM motherboard_parameters WHERE (price <= {price_max}) AND (price >= {price_min}) AND ((SELECT cpu_parameters.socket FROM cpu_parameters WHERE cpu_parameters.name = {naming}) = motherboard_parameters.socket)')
     selection = cur.fetchall()
 
     return selection
