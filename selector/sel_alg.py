@@ -1,4 +1,4 @@
-from selector.sel_cpu import search_cpu
+from .sel_cpu import search_cpu
 from selector.sel_mb import search_mb
 from selector.sel_gpu import search_gpu
 from selector.sel_ram import search_ram
