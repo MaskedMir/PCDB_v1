@@ -1,0 +1,6 @@
+name,chip,memory_type,memory,bitrate,connection_interface,power,price
+NVIDIA GeForce RTX 3080,Turing,GDDR6X,10 GB,320-bit,PCIe 4.0 x16,320W,699
+NVIDIA GeForce RTX 3090,Ampere,GDDR6X,24 GB,384-bit,PCIe 4.0 x16,350W,1499
+AMD Radeon RX 6800 XT,RDNA 2,GDDR6,16 GB,256-bit,PCIe 4.0 x16,300W,649
+AMD Radeon RX 6900 XT,RDNA 2,GDDR6,16 GB,256-bit,PCIe 4.0 x16,300W,999
+

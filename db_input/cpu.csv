@@ -1,0 +1,5 @@
+name,technical_process,canals,cores,frequency,cache,tdp,video_core,socket,ram_type,ram_canale,ram_frequency,price
+Intel Core i9-11900K,10nm,2,8,3.5,16,125,Intel UHD Graphics 750,LGA1200,DDR4,Dual Channel,3200,539
+AMD Ryzen 9 5950X,7nm,2,16,3.4,64,105,None,AM4,DDR4,Dual Channel,3200,799
+Intel Core i7-11700K,14nm,2,8,3.6,16,125,Intel UHD Graphics 750,LGA1200,DDR4,Dual Channel,3200,399
+AMD Ryzen 7 5800X,7nm,2,8,3.8,32,105,None,AM4,DDR4,Dual Channel,3200,449

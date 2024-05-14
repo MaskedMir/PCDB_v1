@@ -1,42 +1,57 @@
-def parametr_select(column, list):
-    parametr_list = []
-    for el in list:
-        parametr_list.append(el[column])
-    return parametr_list
-
-
 from db_handler import db_sel
 
-PSD_PROCENT = 0.1
+PSD_PROCENT = 0.15
 
 
-def search_psd(price_pc):  # Отбор из БД PSD
-    psd_price_max = int(price_pc * (PSD_PROCENT + 0.05))
-    psd_price_min = int(price_pc * (PSD_PROCENT - 0.05))
+# Предполагая, что функция db_sel правильно реализована и возвращает список GPU
+def search_psd(price_pc):
+    price_max = int(price_pc * (PSD_PROCENT + 0.05))
+    price_min = int(price_pc * (PSD_PROCENT - 0.05))
 
-    psd_selection = db_sel("psd", psd_price_max, psd_price_min)
+    psd_selection = db_sel("psd", price_max, price_min)
 
-    try:
-        if len(psd_selection) > 1:
-            result = select_psd(psd_selection)
-        else:
-            result = psd_selection[0]
-    except IndexError:
-        result = ["Нет комплектующей", 0]
+    # Проверяем, что есть хотя бы два графических процессора для сравнения
+    if len(psd_selection) == 0:
+        print("Not enough GPUs to compare.")
+        return ["Нет комплектующей", 0]
+    elif len(psd_selection) < 2:
+        return psd_selection[0]
 
-    return result
+    return compare_gpus(psd_selection)
 
 
-def select_psd(psd_selection):
-    el_list = [0] * len(psd_selection)
-    parametrs = {1: 2, 2: 2, 3: 3}
+def compare_gpus(psd_selection):
+    # Сравнение параметров и выбор лучшего GPU
+    best_psd_index = -1
+    best_score = float('-inf')
 
-    for par_num in range(1, 11):
-        tp_list = parametr_select(par_num, psd_selection)
-        el_list[tp_list.index(max(tp_list))] += parametrs[par_num]
+    for i, psd in enumerate(psd_selection):
+        score = 0
 
-    if el_list.count(max(el_list)) != 1:
-        price_list = parametr_select(4, psd_selection)
-        el_list[price_list.index(min(price_list))] += 10
+        # capacity: чем больше объем памяти, тем лучше
+        capacity = []
+        # price: чем меньше, тем лучше
+        price = []
 
-    return psd_selection[el_list.index(max(el_list))]
+        for parameter in psd_selection:
+            capacity.append(parameter[2])
+        if psd[2] == max(capacity):
+            score += 2
+
+        for parameter in psd_selection:
+            price.append(parameter[5])
+        if psd[5] == min(price):
+            score += 3
+
+        if psd[1] == "NVMe SSD":
+            score += 5
+        elif psd[1] == "SSD":
+            score += 3
+        elif psd[1] == "HDD":
+            score += 1
+
+        if score > best_score:
+            best_score = score
+            best_psd_index = i
+
+    return psd_selection[best_psd_index]

@@ -1,39 +1,56 @@
-def parametr_select(column, list):
-    parametr_list = []
-    for el in list:
-        parametr_list.append(el[column])
-    return parametr_list
+from db_handler import psu_db
+
+PSU_PROCENT = 0.10  # Процент от общей стоимости компьютера, выделяемый на блок питания
 
 
-from db_handler import ps_db
-PS_PROCENT = 0.1
-def search_ps(price_pc, pc_list):
-    price_max = int(price_pc * (PS_PROCENT + 0.05))
-    price_min = int(price_pc * (PS_PROCENT - 0.05))
-    power = 200
+def search_psu(price_pc):
+    price_max = int(price_pc * (PSU_PROCENT + 0.05))
+    price_min = int(price_pc * (PSU_PROCENT - 0.05))
 
-    ps_sel = ps_db(power, price_max, price_min)
+    psu_selection = psu_db(price_max, price_min)
 
-    try:
-        if len(ps_sel) > 1:
-            result = select_ps(ps_sel)
-        else:
-            result = ps_sel[0]
-    except IndexError:
-        result = ["Нет комплектующей", 0]
+    # Проверяем, что есть хотя бы один блок питания для сравнения
+    if len(psu_selection) == 0:
+        print("Not enough PSUs to compare.")
+        return ["Нет комплектующей", 0]
+    elif len(psu_selection) < 2:
+        return psu_selection[0]
 
-    return result
+    return compare_psus(psu_selection)
 
-def select_ps(ps_selection):
-    el_list = [0] * len(ps_selection)
-    parametrs = {1: 2, 2: 2}
 
-    for par_num in range(1, 2):
-        tp_list = parametr_select(par_num, ps_selection)
-        el_list[tp_list.index(max(tp_list))] += parametrs[par_num]
+def compare_psus(psu_selection):
+    # Сравнение параметров и выбор лучшего блока питания
+    best_psu_index = -1
+    best_score = float('-inf')
 
-    if el_list.count(max(el_list)) != 1:
-        price_list = parametr_select(3, ps_selection)
-        el_list[price_list.index(min(price_list))] += 10
+    for i, psu in enumerate(psu_selection):
+        score = 0
 
-    return ps_selection[el_list.index(max(el_list))]
+        # power: чем больше мощность, тем лучше
+        power = []
+        # lvl: чем выше уровень, тем лучше (например, Gold лучше Bronze)
+        lvl = []
+        # price: чем меньше, тем лучше
+        price = []
+
+        for parameter in psu_selection:
+            power.append(parameter[1])
+        if psu[1] == max(power):
+            score += 3
+
+        for parameter in psu_selection:
+            lvl.append(parameter[2])
+        if psu[2] == max(lvl):
+            score += 2
+
+        for parameter in psu_selection:
+            price.append(parameter[3])
+        if psu[3] == min(price):
+            score += 3
+
+        if score > best_score:
+            best_score = score
+            best_psu_index = i
+
+    return psu_selection[best_psu_index]

@@ -1,40 +1,74 @@
-def parametr_select(column, list):
-    parametr_list = []
-    for el in list:
-        parametr_list.append(el[column])
-    return parametr_list
-
-
 from db_handler import db_sel
 
-GPU_PROCENT = 0.4
+GPU_PROCENT = 0.40  # Процент от общей стоимости компьютера, выделяемый на хранилище
 
-
-def search_gpu(price_pc):  # Отбор из БД CPU
-
-    price_max = int(price_pc * (GPU_PROCENT + 0.05))
-    price_min = int(price_pc * (GPU_PROCENT - 0.05))
+# Функция для поиска SSD/HDD
+def search_gpu(price_pc):
+    price_max = int(price_pc * (GPU_PROCENT + 0.15))
+    price_min = int(price_pc * (GPU_PROCENT - 0.15))
 
     gpu_selection = db_sel("gpu", price_max, price_min)
 
-    try:
-        result = select_gpu(gpu_selection)
-    except IndexError:
-        result = ["Нет комплектующей", 0]
+    # Проверяем, что есть хотя бы один накопитель для сравнения
+    if len(gpu_selection) == 0:
+        print("Not enough storages to compare.")
+        return ["Нет комплектующей", 0]
+    elif len(gpu_selection) < 2:
+        return gpu_selection[0]
 
-    return result
+    return compare_gpus(gpu_selection)
+
+# Функция для сравнения и выбора лучшего SSD/HDD
+def compare_gpus(gpu_selection):
+    best_gpu_index = -1
+    best_score = float('-inf')
+
+    for i, gpu in enumerate(gpu_selection):
+        score = 0
+
+        # chip: сравнение по типу чипа может быть специфическим и требует дополнительной логики, если необходимо
+        # memory_type: чем выше тип памяти (DDR6 лучше DDR5), тем лучше
+        memory_type = []
+        # memory: чем больше, тем лучше
+        memory = []
+        # bitrate: чем больше, тем лучше
+        bitrate = []
+        # connection_interface: может быть специфическим для совместимости
+        # power: чем меньше, тем лучше
+        power = []
+        # price: чем меньше, тем лучше
+        price = []
+
+        for parameter in gpu_selection:
+            memory_type.append(parameter[2])
+        if gpu[2] == max(memory_type):
+            score += 2
+
+        for parameter in gpu_selection:
+            memory.append(parameter[3])
+        if gpu[3] == max(memory):
+            score += 3
+
+        for parameter in gpu_selection:
+            bitrate.append(parameter[4])
+        if gpu[4] == max(bitrate):
+            score += 2
+
+        for parameter in gpu_selection:
+            power.append(parameter[6])
+        if gpu[6] == min(power):
+            score += 2
+
+        for parameter in gpu_selection:
+            price.append(parameter[7])
+        if gpu[7] == min(price):
+            score += 3
+
+        if score > best_score:
+            best_score = score
+            best_gpu_index = i
 
 
-def select_gpu(gpu_selection):
-    gpu_list = [0] * len(gpu_selection)
-    parametrs = {1: 2, 2: 1, 3: 2, 4: 1, 5: 2, 6: 0}
+    return gpu_selection[best_gpu_index]
 
-    for par_num in range(1, 7):
-        tp_list = parametr_select(par_num, gpu_selection)
-        gpu_list[tp_list.index(max(tp_list))] += parametrs[par_num]
 
-    if gpu_list.count(max(gpu_list)) != 1:
-        price_list = parametr_select(7, gpu_selection)
-        gpu_list[price_list.index(min(price_list))] += 10
-
-    return gpu_selection[gpu_list.index(max(gpu_list))]

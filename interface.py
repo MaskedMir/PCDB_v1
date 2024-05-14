@@ -12,11 +12,11 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(500, 500)
+        MainWindow.resize(550, 350)
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.splitter = QtWidgets.QSplitter(parent=self.centralwidget)
-        self.splitter.setGeometry(QtCore.QRect(10, 10, 490, 490))
+        self.splitter.setGeometry(QtCore.QRect(20, 20, 500, 300))
         self.splitter.setOrientation(QtCore.Qt.Orientation.Vertical)
         self.splitter.setObjectName("splitter")
         self.frame = QtWidgets.QFrame(parent=self.splitter)
@@ -45,7 +45,7 @@ class Ui_MainWindow(object):
         self.listWidget.setObjectName("listWidget")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 276, 18))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 0, 20))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)

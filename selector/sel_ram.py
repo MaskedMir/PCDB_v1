@@ -1,41 +1,63 @@
-def parametr_select(column, list):
-    parametr_list = []
-    for el in list:
-        parametr_list.append(el[column])
-    return parametr_list
-
-
 from db_handler import db_sel
 
-RAM_PROCENT = 0.1
+RAM_PROCENT = 0.15  # Процент от общей стоимости компьютера, выделяемый на оперативную память
 
-
-def search_ram(price_pc):  # Отбор из БД RAM
+# Функция для поиска RAM
+def search_ram(price_pc):
     price_max = int(price_pc * (RAM_PROCENT + 0.05))
     price_min = int(price_pc * (RAM_PROCENT - 0.05))
 
     ram_selection = db_sel("ram", price_max, price_min)
 
-    try:
-        if len(ram_selection) > 1:
-            result = select_ram(ram_selection)
-        else:
-            result = ram_selection[0]
-    except IndexError:
-        result = ["Нет комплектующей", 0]
-    return result
+    # Проверяем, что есть хотя бы два модуля оперативной памяти для сравнения
+    if len(ram_selection) == 0:
+        print("Not enough RAMs to compare.")
+        return ["Нет комплектующей", 0]
+    elif len(ram_selection) < 2:
+        return ram_selection[0]
 
+    return compare_rams(ram_selection)
 
-def select_ram(ram_selection):
-    el_list = [0] * len(ram_selection)
-    parametrs = {1: 2, 2: 2, 3: 3, 4: 2}
+def compare_rams(ram_selection):
+    # Сравнение параметров и выбор лучшего RAM
+    best_ram_index = -1
+    best_score = float('-inf')
 
-    for par_num in range(1, 6):
-        tp_list = parametr_select(par_num, ram_selection)
-        el_list[tp_list.index(max(tp_list))] += parametrs[par_num]
+    for i, ram in enumerate(ram_selection):
+        score = 0
 
-    if el_list.count(max(el_list)) != 1:
-        price_list = parametr_select(5, ram_selection)
-        el_list[price_list.index(min(price_list))] += 10
+        # type: тип памяти, например DDR4 или DDR5
+        type_ = []
+        # memory: объем памяти, чем больше, тем лучше
+        memory = []
+        # power: потребляемая мощность, чем меньше, тем лучше
+        power = []
+        # price: цена, чем меньше, тем лучше
+        price = []
 
-    return ram_selection[el_list.index(max(el_list))]
+        for parameter in ram_selection:
+            type_.append(parameter[1])
+        if ram[1] == max(type_):
+            score += 2
+
+        for parameter in ram_selection:
+            memory.append(parameter[2])
+        if ram[2] == max(memory):
+            score += 3
+
+        for parameter in ram_selection:
+            power.append(parameter[3])
+        if ram[3] == min(power):
+            score += 2
+
+        for parameter in ram_selection:
+            price.append(parameter[4])
+        if ram[4] == min(price):
+            score += 3
+
+        if score > best_score:
+            best_score = score
+            best_ram_index = i
+
+    return ram_selection[best_ram_index]
+

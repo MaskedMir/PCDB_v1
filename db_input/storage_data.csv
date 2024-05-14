@@ -1,0 +1,8 @@
+name,type,capacity,interface,form_factor,price
+Samsung 870 EVO,SSD,1TB,SATA III,2.5 inch,129
+Crucial MX500,SSD,500GB,SATA III,2.5 inch,69
+Seagate BarraCuda,SSD,2TB,SATA III,2.5 inch,199
+WD Blue SN550,NVMe SSD,1TB,PCIe Gen3 x4,M.2 2280,119
+Samsung 970 EVO Plus,NVMe SSD,2TB,PCIe Gen3 x4,M.2 2280,349
+Seagate IronWolf,HDD,4TB,SATA III,3.5 inch,109
+WD Red,HDD,6TB,SATA III,3.5 inch,189

@@ -1,0 +1,5 @@
+name,chipset,socket,ram_type,expansion_slots,sata,sata_version,m2,usb3.2,usb2.0,form_factor,price
+ASUS ROG Strix Z590-E Gaming WiFi,Intel Z590,LGA1200,DDR4,4,6,SATA 3.0,3,8,4,ATX,399
+GIGABYTE B550 AORUS Elite,AMD B550,AM4,DDR4,4,6,SATA 3.0,2,2,4,ATX,159
+MSI MAG B550M Mortar,AMD B550,AM4,DDR4,4,6,SATA 3.0,2,4,6,Micro ATX,139
+ASRock B450M Steel Legend,AMD B450,AM4,DDR4,4,4,SATA 3.0,1,4,6,Micro ATX,99
